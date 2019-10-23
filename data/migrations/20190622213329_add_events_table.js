@@ -1,34 +1,33 @@
-
-exports.up = function(knex, Promise) {
-  return knex.schema.createTable('events', (tbl) => {
+exports.up = function( knex, Promise ){
+  return knex.schema.createTable( "events", ( tbl ) => {
     tbl.increments();
     tbl
-        .string('event_title', 255)
-        .notNullable();
+      .string( "event_title", 255 )
+      .notNullable();
     tbl
-        .string('event_description', 255);
+      .string( "event_description", 255 );
     tbl
-        .string('image_url', 255).defaultTo('');
+      .string( "image_url", 255 ).defaultTo( "" );
     tbl
-        .date('event_date').defaultTo('');
+      .date( "event_date" );
     tbl
-        .time('event_time').defaultTo('');
+      .time( "event_time" ).defaultTo( "" );
     tbl
-        .integer('attendees', 255);
+      .integer( "attendees", 255 );
     tbl
-        .integer('budget');
+      .integer( "budget" );
     tbl
-        .integer('user_id')
-        .unsigned()
-        .references('id')
-        .inTable('users')
-        .onDelete('CASCADE')
-        .onUpdate('CASCADE');
+      .integer( "user_id" )
+      .unsigned()
+      .references( "id" )
+      .inTable( "users" )
+      .onDelete( "CASCADE" )
+      .onUpdate( "CASCADE" );
     tbl
-        .boolean('completed').defaultTo(false);
-  });
+      .boolean( "completed" ).defaultTo( false );
+  } );
 };
 
-exports.down = function(knex, Promise) {
-  return knex.schema.dropTableIfExists('events');
+exports.down = function( knex, Promise ){
+  return knex.schema.dropTableIfExists( "events" );
 };

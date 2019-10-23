@@ -5,15 +5,15 @@ module.exports = {
   development: {
     client: 'sqlite3',
     connection: {
-      filename: './data/corporate-event-planner.sqlite3'
+      filename: './data/corporate-event-planner.sqlite3',
     },
     useNullAsDefault: true,
     migrations: {
-      directory: './data/migrations'
+      directory: './data/migrations',
     },
     seeds: {
-      directory: './data/seeds'
-    }
+      directory: './data/seeds',
+    },
   },
   testing: {
     client: 'sqlite3',
@@ -33,7 +33,10 @@ module.exports = {
     client: 'pg',
     connection: process.env.DATABASE_URL,
     migrations: {
-      directory: './data/migrations'
+      directory: './data/migrations',
+    },
+    seeds: {
+      directory: './database/seeds',
     },
     useNullAsDefault: true,
   },
