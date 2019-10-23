@@ -11,7 +11,7 @@ exports.up = function( knex, Promise ){
     tbl
       .date( "event_date" );
     tbl
-      .time( "event_time" ).defaultTo( "" );
+      .time( "event_time" );
     tbl
       .integer( "attendees", 255 );
     tbl
