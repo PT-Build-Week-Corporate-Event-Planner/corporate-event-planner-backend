@@ -33,7 +33,7 @@ exports.seed = function( knex, Promise ){
           event_time: moment( faker.date.future() ).format( "LT" ),
           attendees: 10,
           budget: 600,
-          user_id: 0,
+          user_id: 1,
         }
       ] );
     } );
