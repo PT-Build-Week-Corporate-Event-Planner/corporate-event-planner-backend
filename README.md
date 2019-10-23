@@ -2,7 +2,7 @@
 
 [Product Canvas](https://docs.google.com/document/d/1ZZl5PvRdH3rN4U2iFprFKlrf3IO-Uvm3kvv9KFfpiM0/edit?usp=sharing)
 
-All API requests made to: https://corporate-event-planner-webeu.herokuapp.com/
+All API requests made to: https://event-planner-pt.herokuapp.com/
 
 Aevent makes it easier for users to manage all aspects of event planning, from tracking tasks, items which need to be purchased, and vendors facilitating the event, all in one place.
 
