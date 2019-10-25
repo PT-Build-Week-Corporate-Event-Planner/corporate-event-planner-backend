@@ -139,7 +139,12 @@ router.post( "/", restricted, ( req, res ) => {
     } )
     .then( ( newEvent ) => {
       res.status( 201 )
-        .json( { ...newEvent, tasks: [], shopping_list: [], vendors: [] } );
+        .json( {
+          ...newEvent[ 0 ],
+          tasks: [],
+          shopping_list: [],
+          vendors: []
+        } );
     } )
     .catch( ( error ) => {
       console.log( error );
