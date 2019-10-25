@@ -144,6 +144,7 @@ router.post('/', restricted, (req, res) => {
         res.status(201).json({ ...newEvent, completed: Boolean(newEvent.completed), tasks: [], shopping_list: [], vendors: []});
       })
       .catch((error) => {
+        console.log(error);
         res.status(500).json(errorMessage.eventNotAdded);
       });
 });
