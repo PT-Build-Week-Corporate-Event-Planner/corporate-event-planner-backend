@@ -91,15 +91,10 @@ router.delete( "/:id", restricted, ( req, res ) => {
 // [PUT] task by id
 router.put( "/:id", restricted, async( req, res ) => {
   const { id } = req.params;
-  const { task_name, task_completed, event_id } = req.body;
-  const user_id = req.decoded.subject;
+  const task = req.body;
   try{
-    const updatedTask = Tasks.verifyAndCleanTask( task_name,
-      task_completed,
-      event_id
-    );
-    console.log( updatedTask );
-    const task = await Tasks.updateTask( updatedTask, id );
+    const task = await Tasks.updateTask( task, id );
+    console.log( task );
     if( !task ){
       res.status( 404 ).json( errorMessage.taskNotFound );
     }else{
