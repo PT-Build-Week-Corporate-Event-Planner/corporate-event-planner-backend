@@ -60,6 +60,7 @@ router.post( "/", restricted, ( req, res ) => {
   if( !task_name || !user_id || !event_id ){
     res.status( 400 ).json( errorMessage.missingEventInfo );
   }else{
+    console.log( req.body );
     db( "tasks" )
       .insert( { task_name, task_completed, event_id } )
       .then( arrayOfIds => {
