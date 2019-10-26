@@ -1,112 +1,116 @@
-const express = require('express');
-const bcrypt = require('bcryptjs');
-const { restricted } = require('../middleware/restricted');
+const express = require( "express" );
+const bcrypt = require( "bcryptjs" );
+const { restricted } = require( "../middleware/restricted" );
 
 const router = express.Router();
-const db = require('../data/dbConfig');
-const errorMessage = require('../utils/errorMessage');
-const responseMessage = require('../utils/responseMessage');
+const db = require( "../data/dbConfig" );
+const errorMessage = require( "../utils/errorMessage" );
+const responseMessage = require( "../utils/responseMessage" );
 
-
-const Events = require('../api/helpers/eventsHelpers');
-const Tasks = require('../api/helpers/tasksHelpers');
+const Events = require( "../api/helpers/eventsHelpers" );
+const Tasks = require( "../api/helpers/tasksHelpers" );
 
 // [GET] tasks for event
-router.get('/', restricted, (req, res) => {
-  if (req.query && req.query.event_id) {
-    Tasks.getTasksForEvent(req.query.event_id)
-        .then((tasks) => {
-          if (!tasks) {
-            res.status(404).json(errorMessage.tasksNotFound);
-          } else {
-            res.status(200).json(tasks);
-          }
-        })
-        .catch((error) => {
-          res.status(500).json(errorMessage.tasksNotRetrieved);
-        });
-  } else {
+router.get( "/", restricted, ( req, res ) => {
+  if( req.query && req.query.event_id ){
+    Tasks.getTasksForEvent( req.query.event_id )
+      .then( ( tasks ) => {
+        if( !tasks ){
+          res.status( 404 ).json( errorMessage.tasksNotFound );
+        }else{
+          res.status( 200 ).json( tasks );
+        }
+      } )
+      .catch( ( error ) => {
+        res.status( 500 ).json( errorMessage.tasksNotRetrieved );
+      } );
+  }else{
     Tasks.getTasks()
-        .then((tasks) => {
-          res.status(200).json(tasks);
-        })
-        .catch((error) => {
-          res.status(500).json(errorMessage.tasksNotRetrieved);
-        });
+      .then( ( tasks ) => {
+        res.status( 200 ).json( tasks );
+      } )
+      .catch( ( error ) => {
+        res.status( 500 ).json( errorMessage.tasksNotRetrieved );
+      } );
   }
-});
+} );
 
 //[GET] Task by id
-router.get('/:id', restricted, (req, res) => {
+router.get( "/:id", restricted, ( req, res ) => {
   const { id } = req.params;
-  Tasks.getTaskById(id)
-      .then((task) => {
-        if (!task) {
-          res.status(404).json(errorMessage.taskNotFound);
-        } else {
-          res.status(200).json({ ...task, task_completed: Boolean(task.task_completed) });
-        }
-      })
-      .catch((error) => {
-        res.status(500).json(errorMessage.taskNotRetrieved);
-      });
-});
+  Tasks.getTaskById( id )
+    .then( ( task ) => {
+      if( !task ){
+        res.status( 404 ).json( errorMessage.taskNotFound );
+      }else{
+        res.status( 200 )
+          .json( { ...task, task_completed: Boolean( task.task_completed ) } );
+      }
+    } )
+    .catch( ( error ) => {
+      res.status( 500 ).json( errorMessage.taskNotRetrieved );
+    } );
+} );
 
 // [POST] a task
-router.post('/', restricted, (req, res) => {
+router.post( "/", restricted, ( req, res ) => {
   const { task_name, task_completed } = req.body;
   const event_id = req.query.event_id;
   const user_id = req.decoded.subject;
-  if (!task_name || !user_id || !event_id) {
-    res.status(400).json(errorMessage.missingEventInfo);
-  } else {
-    db('tasks')
-        .insert({ task_name, task_completed, event_id })
-        .then(arrayOfIds => {
-          return db('tasks').where({id: arrayOfIds[0]})
-              .then(arrayOfTasks => {
-                res.status(201).json({...arrayOfTasks[0], task_completed: Boolean(arrayOfTasks[0].task_completed)})
-              })
-              .catch(error => {
-                res.status(500).json({ errorMessage: 'The action record could not be created. '});
-              });
-
-        });
+  if( !task_name || !user_id || !event_id ){
+    res.status( 400 ).json( errorMessage.missingEventInfo );
+  }else{
+    db( "tasks" )
+      .insert( { task_name, task_completed, event_id } )
+      .then( arrayOfIds => {
+        return db( "tasks" ).where( { id: arrayOfIds[ 0 ] } ).returning( "*" )
+          .then( task => {
+            res.status( 201 ).json( task );
+          } )
+          .catch( error => {
+            res.status( 500 )
+              .json( { errorMessage: "The action record could not be created. " } );
+          } );
+        
+      } );
   }
-});
+} );
 
 //[DELETE] a task
-router.delete('/:id', restricted, (req, res) => {
-  const {id} = req.params;
-  Tasks.deleteTask(id)
-      .then((data) => {
-        if (!data) {
-          res.status(404).json(errorMessage.taskNotFound);
-        } else {
-          res.status(200).json(responseMessage.deleteTask);
-        }
-      })
-      .catch((error) => {
-        res.status(500).json(errorMessage.taskNotRemoved);
-      });
-});
+router.delete( "/:id", restricted, ( req, res ) => {
+  const { id } = req.params;
+  Tasks.deleteTask( id )
+    .then( ( data ) => {
+      if( !data ){
+        res.status( 404 ).json( errorMessage.taskNotFound );
+      }else{
+        res.status( 200 ).json( responseMessage.deleteTask );
+      }
+    } )
+    .catch( ( error ) => {
+      res.status( 500 ).json( errorMessage.taskNotRemoved );
+    } );
+} );
 
 // [PUT] task by id
-router.put('/:id', restricted, async (req, res) => {
+router.put( "/:id", restricted, async( req, res ) => {
   const { id } = req.params;
   const { task_name, task_completed, event_id } = req.body;
   const user_id = req.decoded.subject;
-  try {
-    const updatedTask = Tasks.verifyAndCleanTask(task_name, task_completed, event_id);
-    const data = await Tasks.updateTask(updatedTask, id);
-    if (!data) {
-      res.status(404).json(errorMessage.taskNotFound);
-    } else {
-      res.status(200).json({ success: true, ...updatedTask });
+  try{
+    const updatedTask = Tasks.verifyAndCleanTask( task_name,
+      task_completed,
+      event_id
+    );
+    const data = await Tasks.updateTask( updatedTask, id );
+    if( !data ){
+      res.status( 404 ).json( errorMessage.taskNotFound );
+    }else{
+      res.status( 200 ).json( { success: true, ...updatedTask } );
     }
-  } catch (error) {
-    res.status(500).json(errorMessage.taskNotUpdated);
+  }catch( error ){
+    res.status( 500 ).json( errorMessage.taskNotUpdated );
   }
-});
+} );
 
 module.exports = router;
