@@ -63,8 +63,8 @@ router.post( "/", restricted, ( req, res ) => {
     
     db( "tasks" )
       .insert( { task_name, task_completed, event_id } ).returning( "*" )
-      .then( task => {
-        res.status( 201 ).json( task );
+      .then( tasks => {
+        res.status( 201 ).json( tasks[0] );
       } ).catch( err => {
       console.log( err );
       res.status( 500 ).json( { error: err.message } );
