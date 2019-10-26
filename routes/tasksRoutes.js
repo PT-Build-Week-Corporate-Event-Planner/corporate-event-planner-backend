@@ -55,26 +55,20 @@ router.get( "/:id", restricted, ( req, res ) => {
 // [POST] a task
 router.post( "/", restricted, ( req, res ) => {
   const { task_name, task_completed } = req.body;
-  console.log( req.query );
   const event_id = req.query.event_id;
   const user_id = req.decoded.subject;
   if( !task_name || !user_id || !event_id ){
     res.status( 400 ).json( errorMessage.missingEventInfo );
   }else{
-    console.log( req.body );
+    
     db( "tasks" )
-      .insert( { task_name, task_completed, event_id } )
-      .then( arrayOfIds => {
-        return db( "tasks" ).where( { id: arrayOfIds[ 0 ] } ).returning( "*" )
-          .then( task => {
-            res.status( 201 ).json( task );
-          } )
-          .catch( error => {
-            res.status( 500 )
-              .json( { errorMessage: "The action record could not be created. " } );
-          } );
-        
-      } );
+      .insert( { task_name, task_completed, event_id } ).returning( "*" )
+      .then( task => {
+        res.status( 201 ).json( task );
+      } ).catch( err => {
+      console.log( err );
+      res.status( 500 ).json( { error: err.message } );
+    } );
   }
 } );
 
