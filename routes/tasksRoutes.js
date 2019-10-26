@@ -55,6 +55,7 @@ router.get( "/:id", restricted, ( req, res ) => {
 // [POST] a task
 router.post( "/", restricted, ( req, res ) => {
   const { task_name, task_completed } = req.body;
+  console.log( req.query );
   const event_id = req.query.event_id;
   const user_id = req.decoded.subject;
   if( !task_name || !user_id || !event_id ){
