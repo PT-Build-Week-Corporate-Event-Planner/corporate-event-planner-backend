@@ -93,6 +93,7 @@ router.put( "/:id", restricted, async( req, res ) => {
   const { id } = req.params;
   const task = req.body;
   try{
+    console.log( task, id );
     const task = await Tasks.updateTask( task, id );
     console.log( task );
     if( !task ){
