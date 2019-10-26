@@ -95,17 +95,13 @@ router.put( "/:id", restricted, async( req, res ) => {
   console.log( req.body );
   const { id } = req.params;
   const task = req.body;
-  try{
-    console.log( task, id );
-    const task = await Tasks.updateTask( task, id );
-    console.log( task );
-    if( !task ){
-      res.status( 404 ).json( errorMessage.taskNotFound );
-    }else{
-      res.status( 200 ).json( task[ 0 ] );
-    }
-  }catch( error ){
-    res.status( 500 ).json( errorMessage.taskNotUpdated );
+  console.log( task, id );
+  const updatedTask = await Tasks.updateTask( task, id );
+  console.log( updatedTask );
+  if( !task ){
+    res.status( 404 ).json( errorMessage.taskNotFound );
+  }else{
+    res.status( 200 ).json( updatedTask[ 0 ] );
   }
 } );
 
