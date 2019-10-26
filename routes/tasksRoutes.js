@@ -98,6 +98,7 @@ router.put( "/:id", restricted, async( req, res ) => {
       task_completed,
       event_id
     );
+    console.log( updatedTask );
     const task = await Tasks.updateTask( updatedTask, id );
     if( !task ){
       res.status( 404 ).json( errorMessage.taskNotFound );
