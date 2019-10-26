@@ -91,6 +91,8 @@ router.delete( "/:id", restricted, ( req, res ) => {
 // [PUT] task by id
 router.put( "/:id", restricted, async( req, res ) => {
   console.log( "Inside tasks" );
+  console.log( req.params );
+  console.log( req.body );
   const { id } = req.params;
   const task = req.body;
   try{
