@@ -19,7 +19,7 @@ const deleteTask = id => db('tasks')
 
 const updateTask = (task, id) => db('tasks')
     .where({ id })
-    .update(task);
+    .update(task).returning('&');
 
 const markAsCompleted = (task, id) => db('tasks')
     .where({ id })

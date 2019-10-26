@@ -64,7 +64,7 @@ router.post( "/", restricted, ( req, res ) => {
     db( "tasks" )
       .insert( { task_name, task_completed, event_id } ).returning( "*" )
       .then( tasks => {
-        res.status( 201 ).json( tasks[0] );
+        res.status( 201 ).json( tasks[ 0 ] );
       } ).catch( err => {
       console.log( err );
       res.status( 500 ).json( { error: err.message } );
@@ -98,11 +98,11 @@ router.put( "/:id", restricted, async( req, res ) => {
       task_completed,
       event_id
     );
-    const data = await Tasks.updateTask( updatedTask, id );
-    if( !data ){
+    const task = await Tasks.updateTask( updatedTask, id );
+    if( !task ){
       res.status( 404 ).json( errorMessage.taskNotFound );
     }else{
-      res.status( 200 ).json( { success: true, ...updatedTask } );
+      res.status( 200 ).json( task[ 0 ] );
     }
   }catch( error ){
     res.status( 500 ).json( errorMessage.taskNotUpdated );
